@@ -38,21 +38,26 @@ La comprobación de este repositorio con `vinext` dio 89% de compatibilidad, per
 
 Para esta aplicación, use [OpenNext Cloudflare](https://opennext.js.org/cloudflare), que adapta el build estándar de Next.js a Cloudflare Workers y ofrece la compatibilidad de Node necesaria mientras la autenticación se migra a una alternativa compatible con Vinext.
 
-```bash
-npm install -D @opennextjs/cloudflare@latest wrangler@latest
-npx @opennextjs/cloudflare migrate
-```
+El repositorio ya contiene y versiona `wrangler.jsonc` y `open-next.config.ts`. No ejecute `npx @opennextjs/cloudflare migrate`: la configuración ya está declarada y no debe regenerarse durante cada despliegue.
 
-El asistente crea `wrangler.jsonc`, `open-next.config.ts` y scripts de build, previsualización y despliegue. Use esos scripts generados; antes de publicar compruebe que el Worker incluya:
+La configuración declarada usa el Worker canónico `lizarragaibarra`, mantiene el binding de autoreferencia que requiere OpenNext y preserva las variables configuradas en el Dashboard:
 
 ```jsonc
 {
-  "compatibility_date": "2024-09-23",
-  "compatibility_flags": ["nodejs_compat"]
+  "name": "lizarragaibarra",
+  "keep_vars": true,
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "lizarragaibarra"
+    }
+  ]
 }
 ```
 
-Añada `@prisma/client` y `.prisma/client` a `serverExternalPackages` de `next.config.ts` si OpenNext los reporta como dependencias de runtime. Para Neon, adapte Prisma a Workers con `@prisma/adapter-neon` y el driver serverless de Neon. No suba `DATABASE_URL` o `DIRECT_URL` al repositorio.
+OpenNext necesita un bucket R2 independiente para la caché incremental: cree `lizarragaibarra-opennext-cache` una sola vez antes del primer deploy. No es el bucket de documentos del portal. El binding versionado es `NEXT_INC_CACHE_R2_BUCKET`.
+
+`@prisma/client` y `.prisma/client` quedan declarados como paquetes externos del servidor. Para Workers, el cliente Prisma detecta una URL de Neon (`*.neon.tech`) y usa `@prisma/adapter-neon`, que conecta mediante su driver serverless; las URLs locales de PostgreSQL siguen usando el cliente estándar. No se modificaron esquema ni migraciones. No suba `DATABASE_URL` o `DIRECT_URL` al repositorio.
 
 Antes de producción, sustituya las comprobaciones de `VERCEL_*` que todavía existan en el código por variables neutrales del proveedor o por `NODE_ENV`. Cloudflare no define esas variables.
 
@@ -89,9 +94,21 @@ Nunca pegue valores secretos en `wrangler.jsonc`, GitHub Actions, commits o mens
 
 1. Conecte el repositorio GitHub a Cloudflare Workers Builds.
 2. Use `main` como rama de producción.
-3. Use los scripts que genere `@opennextjs/cloudflare migrate`; normalmente son el build de OpenNext, una previsualización local con Wrangler y el despliegue con Wrangler.
-4. Cree un entorno `staging` separado con una base Neon distinta antes de usar producción.
-5. Añada el dominio `lizarragaibarra.com` desde Cloudflare y configure `NEXT_PUBLIC_SITE_URL` y `AUTH_URL` con ese dominio.
+3. Configure exactamente estos comandos:
+
+```text
+Build command: npx @opennextjs/cloudflare build
+Deploy command: npx @opennextjs/cloudflare deploy
+```
+
+4. Para verificar una compilación local use `npm run cf:build`; para ejecutarla en el runtime de Workers use `npm run cf:preview`.
+5. `keep_vars: true` evita que Wrangler elimine o reemplace las variables configuradas en el Dashboard. Los secretos tampoco se eliminan durante un deploy. No añada `vars`, `routes` ni secretos a `wrangler.jsonc` mientras el Dashboard siga siendo la fuente de esas configuraciones.
+6. Cree un entorno `staging` separado con una base Neon distinta antes de usar producción.
+7. Añada el dominio `lizarragaibarra.com` desde Cloudflare y configure `NEXT_PUBLIC_SITE_URL` y `AUTH_URL` con ese dominio.
+
+### Nota de compatibilidad
+
+El build actual de OpenNext informa que el soporte para middleware de Node.js es experimental. La aplicación usa `proxy.ts`; la conversión a Worker y el despliegue en seco se validaron correctamente, pero conviene comprobar autenticación y redirecciones en staging antes de publicar producción.
 
 ## 6. Operación posterior al despliegue
 

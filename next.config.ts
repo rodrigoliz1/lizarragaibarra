@@ -3,6 +3,7 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   images: { formats: ["image/avif", "image/webp"] },
+  serverExternalPackages: ["@prisma/client", ".prisma/client"],
   turbopack: { root: process.cwd() },
   experimental: { serverActions: { bodySizeLimit: "4mb" } },
   async headers() {
@@ -17,7 +18,7 @@ const nextConfig: NextConfig = {
             value: "camera=(), microphone=(), geolocation=()",
           },
           { key: "X-Frame-Options", value: "DENY" },
-          ...(process.env.VERCEL_ENV === "production"
+          ...(process.env.NODE_ENV === "production"
             ? [
                 {
                   key: "Strict-Transport-Security",
