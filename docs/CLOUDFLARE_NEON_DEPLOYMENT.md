@@ -34,16 +34,27 @@ npm run admin:create -- --email r.lizarraga@lizarragaibarra.com --name "Rodrigo 
 
 ## 2. Preparar compatibilidad de Cloudflare
 
-Cloudflare recomienda `vinext` para proyectos Next.js nuevos o migrados. Este proyecto usa Prisma, APIs de Node, almacenamiento S3 compatible y autenticación; por eso la migración debe pasar primero la comprobación de compatibilidad y probarse en una rama de staging.
+La comprobación de este repositorio con `vinext` dio 89% de compatibilidad, pero identificó `next-auth` como incompatible porque usa internals de Route Handlers de Next.js. Por ello, **no ejecute `vinext init` ni despliegue con Vinext todavía**.
+
+Para esta aplicación, use [OpenNext Cloudflare](https://opennext.js.org/cloudflare), que adapta el build estándar de Next.js a Cloudflare Workers y ofrece la compatibilidad de Node necesaria mientras la autenticación se migra a una alternativa compatible con Vinext.
 
 ```bash
-npx vinext check
-npx vinext init
+npm install -D @opennextjs/cloudflare@latest wrangler@latest
+npx @opennextjs/cloudflare migrate
 ```
 
-Seleccione **Cloudflare Workers**. El inicializador crea la configuración de Worker y los scripts de desarrollo, build y despliegue. Active `nodejs_compat` en la configuración generada.
+El asistente crea `wrangler.jsonc`, `open-next.config.ts` y scripts de build, previsualización y despliegue. Use esos scripts generados; antes de publicar compruebe que el Worker incluya:
 
-Antes de producción, adapte Prisma para Workers con Neon usando `@prisma/adapter-neon` y el driver serverless de Neon. No suba `DATABASE_URL` o `DIRECT_URL` al repositorio.
+```jsonc
+{
+  "compatibility_date": "2024-09-23",
+  "compatibility_flags": ["nodejs_compat"]
+}
+```
+
+Añada `@prisma/client` y `.prisma/client` a `serverExternalPackages` de `next.config.ts` si OpenNext los reporta como dependencias de runtime. Para Neon, adapte Prisma a Workers con `@prisma/adapter-neon` y el driver serverless de Neon. No suba `DATABASE_URL` o `DIRECT_URL` al repositorio.
+
+Antes de producción, sustituya las comprobaciones de `VERCEL_*` que todavía existan en el código por variables neutrales del proveedor o por `NODE_ENV`. Cloudflare no define esas variables.
 
 ## 3. Crear R2
 
@@ -78,7 +89,7 @@ Nunca pegue valores secretos en `wrangler.jsonc`, GitHub Actions, commits o mens
 
 1. Conecte el repositorio GitHub a Cloudflare Workers Builds.
 2. Use `main` como rama de producción.
-3. Use los scripts que genere `vinext init`; normalmente el build será `npm run build:vinext` y el despliegue `npx @vinext/cloudflare deploy`.
+3. Use los scripts que genere `@opennextjs/cloudflare migrate`; normalmente son el build de OpenNext, una previsualización local con Wrangler y el despliegue con Wrangler.
 4. Cree un entorno `staging` separado con una base Neon distinta antes de usar producción.
 5. Añada el dominio `lizarragaibarra.com` desde Cloudflare y configure `NEXT_PUBLIC_SITE_URL` y `AUTH_URL` con ese dominio.
 
@@ -92,5 +103,7 @@ Nunca pegue valores secretos en `wrangler.jsonc`, GitHub Actions, commits o mens
 ## Referencias
 
 - [Cloudflare: Next.js en Workers](https://developers.cloudflare.com/workers/framework-guides/web-apps/nextjs/)
+- [OpenNext Cloudflare: primeros pasos](https://opennext.js.org/cloudflare/get-started)
+- [OpenNext Cloudflare: paquetes de runtime](https://opennext.js.org/cloudflare/howtos/workerd)
 - [Prisma: Cloudflare Workers con Neon](https://www.prisma.io/docs/orm/v6/prisma-client/deployment/edge/deploy-to-cloudflare)
 - [Cloudflare: secretos de Workers](https://developers.cloudflare.com/workers/configuration/secrets/)
