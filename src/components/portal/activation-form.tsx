@@ -9,6 +9,7 @@ export function ActivationForm({ token }: { token: string }) {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [legalAccepted, setLegalAccepted] = useState(false);
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -25,6 +26,7 @@ export function ActivationForm({ token }: { token: string }) {
           token,
           password,
           passwordConfirmation: confirmation,
+          legalAccepted,
         }),
       });
       const payload = (await response.json()) as { message?: string };
@@ -90,6 +92,26 @@ export function ActivationForm({ token }: { token: string }) {
       <p className="text-[11px] leading-5 text-white/35">
         Usa al menos 12 caracteres con mayúscula, minúscula, número y símbolo.
       </p>
+      <label className="flex items-start gap-3 rounded-xl border border-white/10 p-4 text-xs leading-5 text-white/60">
+        <input
+          checked={legalAccepted}
+          className="mt-1 size-4 accent-white"
+          onChange={(event) => setLegalAccepted(event.target.checked)}
+          required
+          type="checkbox"
+        />
+        <span>
+          He leído los{" "}
+          <Link className="text-white underline underline-offset-4" href="/terminos" target="_blank">
+            Términos de Uso
+          </Link>{" "}
+          y el{" "}
+          <Link className="text-white underline underline-offset-4" href="/aviso-de-privacidad" target="_blank">
+            Aviso de Privacidad
+          </Link>
+          .
+        </span>
+      </label>
       {error ? (
         <p className="text-xs leading-5 text-red-100" role="alert">
           {error}
@@ -97,7 +119,7 @@ export function ActivationForm({ token }: { token: string }) {
       ) : null}
       <button
         className="h-[52px] w-full rounded-xl bg-white text-[10px] font-bold uppercase tracking-[0.16em] text-black disabled:cursor-wait disabled:opacity-60"
-        disabled={submitting}
+        disabled={submitting || !legalAccepted}
         type="submit"
       >
         {submitting ? "Activando…" : "Activar mi cuenta"}

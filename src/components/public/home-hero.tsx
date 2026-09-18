@@ -49,7 +49,6 @@ export function HomeHero() {
         />
       </motion.div>
       <div aria-hidden="true" className="hero-cinematic-shade" />
-      <div aria-hidden="true" className="hero-grid" />
       <motion.div
         animate={reduceMotion ? undefined : { opacity: 0.14, x: 0 }}
         aria-hidden="true"
@@ -67,15 +66,6 @@ export function HomeHero() {
       </motion.div>
 
       <motion.div className="li-container hero-content" style={{ y: copyY }}>
-        <motion.p
-          animate={{ opacity: 1, y: 0 }}
-          className="hero-kicker"
-          initial={reduceMotion ? false : { opacity: 0, y: 12 }}
-          transition={{ duration: 0.7, delay: 0.22, ease }}
-        >
-          Boutique de litigio · México
-        </motion.p>
-
         <div className="hero-message">
           <h1>
             {["Litigio con", "estrategia.", "Defensa con precisión."].map(

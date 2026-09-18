@@ -64,6 +64,7 @@ export function TeamPortrait({
           fill
           sizes="(max-width: 700px) 90vw, 40vw"
           priority={priority}
+          unoptimized
         />
       ) : (
         <div className="portrait-monogram" aria-label={lawyer.name}>

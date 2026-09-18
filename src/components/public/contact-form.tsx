@@ -24,7 +24,6 @@ export function PublicContactForm() {
           phone: data.get("phone"),
           practiceArea: data.get("practiceArea") || undefined,
           message: data.get("message"),
-          privacyAccepted: data.get("privacyAccepted") === "on",
           website: data.get("website") || "",
         }),
       });
@@ -109,19 +108,11 @@ export function PublicContactForm() {
           <input name="website" tabIndex={-1} autoComplete="off" />
         </label>
       </div>
-      <label className="check">
-        <input name="privacyAccepted" type="checkbox" required />
-        <span>
-          He leído el{" "}
-          <Link
-            href="/aviso-de-privacidad"
-            style={{ textDecoration: "underline" }}
-          >
-            aviso de privacidad
-          </Link>{" "}
-          y acepto el tratamiento de mis datos para atender esta solicitud.
-        </span>
-      </label>
+      <p className="form-privacy-notice">
+        Al enviar este formulario, sus datos serán tratados para atender su
+        solicitud conforme a nuestro{" "}
+        <Link href="/aviso-de-privacidad">Aviso de Privacidad</Link>.
+      </p>
       <p style={{ fontSize: 11, lineHeight: 1.8, color: "var(--li-muted)" }}>
         Comparta sólo una descripción general. Evite incluir documentos o
         información sensible en este primer contacto.

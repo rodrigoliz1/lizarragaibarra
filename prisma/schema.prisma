@@ -226,6 +226,11 @@ enum EmailDeliveryStatus {
   MOCKED
 }
 
+enum LegalDocumentType {
+  PRIVACY
+  TERMS
+}
+
 model User {
   id                   String                @id @default(cuid())
   name                 String
@@ -265,9 +270,36 @@ model User {
   createdInvites       ActionToken[]         @relation("InviteCreator")
   mfaRecoveryCodes     MfaRecoveryCode[]
   sessions             UserSession[]
+  legalAcceptances     LegalAcceptance[]
 
   @@index([role, status])
   @@index([createdAt])
+}
+
+model LegalDocumentVersion {
+  id          String            @id @default(cuid())
+  type        LegalDocumentType
+  version     String
+  publishedAt DateTime
+  contentHash String
+  active      Boolean           @default(false)
+  createdAt   DateTime          @default(now())
+  acceptances LegalAcceptance[]
+
+  @@unique([type, version])
+  @@index([type, active])
+}
+
+model LegalAcceptance {
+  id                String               @id @default(cuid())
+  userId            String
+  documentVersionId String
+  acceptedAt        DateTime             @default(now())
+  user              User                 @relation(fields: [userId], references: [id], onDelete: Restrict)
+  documentVersion   LegalDocumentVersion @relation(fields: [documentVersionId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, documentVersionId])
+  @@index([userId, acceptedAt])
 }
 
 model MfaRecoveryCode {

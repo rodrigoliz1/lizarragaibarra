@@ -31,7 +31,7 @@ export async function POST(request: Request) {
       limit: 6,
       windowMs: 60 * 60 * 1000,
     });
-    await activateAccount(parsed.data.token, parsed.data.password);
+    await activateAccount(parsed.data.token, parsed.data.password, parsed.data.legalAccepted);
     return publicApiResponse({
       ok: true,
       message: "Tu cuenta quedó activada. Ya puedes iniciar sesión.",

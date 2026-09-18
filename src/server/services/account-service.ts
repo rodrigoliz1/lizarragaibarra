@@ -1,5 +1,7 @@
 import { Prisma, TokenType, UserStatus } from "@prisma/client";
+import { createHash } from "node:crypto";
 
+import { PRIVACY_CONTENT, TERMS_CONTENT } from "@/data/legal-documents";
 import { db } from "@/lib/db";
 import { renderTransactionalEmail, sendTrackedEmail } from "@/lib/email";
 import { getSiteUrl } from "@/lib/site-url";
@@ -8,6 +10,11 @@ import { createSecureToken, hashToken } from "@/lib/security/tokens";
 import type { InvitedAccountInput } from "@/lib/validation";
 import { hasPermission, type PolicyActor } from "@/server/policies";
 import { AccessDeniedError, ServiceError } from "@/server/services/errors";
+
+const legalContentHashes = {
+  privacy: createHash("sha256").update(PRIVACY_CONTENT).digest("hex"),
+  terms: createHash("sha256").update(TERMS_CONTENT).digest("hex"),
+};
 
 function inviteExpiry() {
   const hours = Number(process.env.ACCOUNT_INVITE_EXPIRY_HOURS || 48);
@@ -169,7 +176,18 @@ export async function createInvitedAccount(
   return { ...created, invitationSent };
 }
 
-export async function activateAccount(token: string, password: string) {
+export async function activateAccount(
+  token: string,
+  password: string,
+  legalAccepted: true,
+) {
+  if (!legalAccepted) {
+    throw new ServiceError(
+      "Debes confirmar la lectura de los documentos jurídicos.",
+      400,
+      "LEGAL_ACCEPTANCE_REQUIRED",
+    );
+  }
   const tokenHash = hashToken(token);
   const actionToken = await db.actionToken.findUnique({
     where: { tokenHash },
@@ -227,6 +245,38 @@ export async function activateAccount(token: string, password: string) {
         409,
         "INVITE_USED",
       );
+    const publishedAt = new Date("2026-09-17T00:00:00.000Z");
+    const [privacyVersion, termsVersion] = await Promise.all([
+      transaction.legalDocumentVersion.upsert({
+        where: { type_version: { type: "PRIVACY", version: "2026-09-17" } },
+        update: { active: true },
+        create: {
+          type: "PRIVACY",
+          version: "2026-09-17",
+          publishedAt,
+          contentHash: legalContentHashes.privacy,
+          active: true,
+        },
+      }),
+      transaction.legalDocumentVersion.upsert({
+        where: { type_version: { type: "TERMS", version: "2026-09-17" } },
+        update: { active: true },
+        create: {
+          type: "TERMS",
+          version: "2026-09-17",
+          publishedAt,
+          contentHash: legalContentHashes.terms,
+          active: true,
+        },
+      }),
+    ]);
+    await transaction.legalAcceptance.createMany({
+      data: [privacyVersion, termsVersion].map((documentVersion) => ({
+        userId: actionToken.userId!,
+        documentVersionId: documentVersion.id,
+      })),
+      skipDuplicates: true,
+    });
     await transaction.actionToken.updateMany({
       where: {
         userId: actionToken.userId,

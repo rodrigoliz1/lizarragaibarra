@@ -48,6 +48,9 @@ export const activationSchema = z
     token: z.string().min(32).max(200),
     password: passwordSchema,
     passwordConfirmation: z.string().max(72),
+    legalAccepted: z.literal(true, {
+      errorMap: () => ({ message: "Debes confirmar la lectura de los documentos jurídicos." }),
+    }),
   })
   .refine((value) => value.password === value.passwordConfirmation, {
     path: ["passwordConfirmation"],

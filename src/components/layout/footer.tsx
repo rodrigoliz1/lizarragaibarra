@@ -37,7 +37,6 @@ export async function Footer() {
             {settings.contactEmail}
           </a>
           <a href={"tel:" + settings.phoneE164}>{settings.phoneDisplay}</a>
-          {settings.address && <p>{settings.address}</p>}
           <Link href="/agendar" className="footer-appointment">
             Agendar consulta <ArrowUpRight size={16} />
           </Link>

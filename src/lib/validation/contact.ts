@@ -5,7 +5,6 @@ import {
   honeypotSchema,
   optionalSingleLine,
   phoneSchema,
-  privacyAcceptanceSchema,
   requiredMultiline,
   requiredSingleLine,
 } from "@/lib/validation/common";
@@ -18,7 +17,6 @@ export const contactSchema = z
     company: optionalSingleLine("La empresa", 160),
     practiceArea: optionalSingleLine("El área de interés", 100),
     message: requiredMultiline("El mensaje", 10, 2500),
-    privacyAccepted: privacyAcceptanceSchema,
     website: honeypotSchema,
   })
   .strict();

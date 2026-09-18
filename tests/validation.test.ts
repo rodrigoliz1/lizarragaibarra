@@ -21,7 +21,6 @@ describe("contactSchema", () => {
       company: "  Empresa   Demo ",
       practiceArea: "Litigio",
       message: "Necesito información general sobre una posible controversia.",
-      privacyAccepted: true,
       website: "",
     });
     expect(result.name).toBe("María Pérez");
@@ -29,19 +28,17 @@ describe("contactSchema", () => {
     expect(result.company).toBe("Empresa Demo");
   });
 
-  it("rechaza consentimiento ausente, teléfono inválido y mensajes mínimos", () => {
+  it("rechaza teléfono inválido y mensajes mínimos", () => {
     const result = contactSchema.safeParse({
       name: "María Pérez",
       email: "maria@example.com",
       phone: "123",
       message: "Hola",
-      privacyAccepted: false,
     });
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.flatten().fieldErrors.phone).toBeDefined();
       expect(result.error.flatten().fieldErrors.message).toBeDefined();
-      expect(result.error.flatten().fieldErrors.privacyAccepted).toBeDefined();
     }
   });
 });
@@ -57,7 +54,6 @@ describe("appointmentSchema", () => {
     time: "10:00",
     description:
       "Deseo una consulta inicial para explicar el contexto general del asunto.",
-    privacyAccepted: true,
     website: "",
   };
 

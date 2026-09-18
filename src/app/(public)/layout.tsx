@@ -1,5 +1,6 @@
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { WhatsAppButton } from "@/components/layout/whatsapp-button";
 import { getPublicContent } from "@/server/services/public-content-service";
 export default async function PublicLayout({
   children,
@@ -16,6 +17,7 @@ export default async function PublicLayout({
       <main id="contenido" tabIndex={-1}>
         {children}
       </main>
+      <WhatsAppButton />
       <Footer />
     </div>
   );

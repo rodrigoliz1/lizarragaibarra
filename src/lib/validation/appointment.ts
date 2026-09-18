@@ -10,7 +10,6 @@ import {
   honeypotSchema,
   optionalSingleLine,
   phoneSchema,
-  privacyAcceptanceSchema,
   requiredMultiline,
   requiredSingleLine,
 } from "@/lib/validation/common";
@@ -43,7 +42,6 @@ export const appointmentSchema = z
       .string({ required_error: "Selecciona un horario." })
       .refine(isTimeString, "El horario no es válido."),
     description: requiredMultiline("La descripción", 10, 2000),
-    privacyAccepted: privacyAcceptanceSchema,
     website: honeypotSchema,
   })
   .strict()

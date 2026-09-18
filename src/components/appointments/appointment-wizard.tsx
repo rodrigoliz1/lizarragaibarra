@@ -31,9 +31,6 @@ const schema = z.object({
     .trim()
     .min(20, "Comparte una descripción general de al menos 20 caracteres.")
     .max(1500),
-  privacyAccepted: z
-    .boolean()
-    .refine(Boolean, "Debes aceptar el aviso de privacidad."),
   website: z.string().max(0).optional(),
 });
 
@@ -41,7 +38,7 @@ type FormValues = z.infer<typeof schema>;
 const stepFields: Array<Array<keyof FormValues>> = [
   ["practiceArea", "modality"],
   ["date", "time"],
-  ["fullName", "email", "phone", "description", "privacyAccepted"],
+  ["fullName", "email", "phone", "description"],
 ];
 
 type PortalAppointmentContext = {
@@ -101,7 +98,6 @@ export function AppointmentWizard({
       email: portalContext?.email || "",
       phone: portalContext?.phone || "",
       description: "",
-      privacyAccepted: false,
       website: "",
     },
   });
@@ -521,38 +517,18 @@ export function AppointmentWizard({
                   {...register("website")}
                 />
               </div>
-              <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-white/10 p-4 text-sm leading-6 text-paper-muted">
-                <input
-                  aria-describedby={
-                    errors.privacyAccepted ? "privacyAccepted-error" : undefined
-                  }
-                  aria-invalid={errors.privacyAccepted ? true : undefined}
-                  className="mt-1 size-4 accent-white"
-                  id="privacyAccepted"
-                  type="checkbox"
-                  {...register("privacyAccepted")}
-                />
-                <span>
-                  Acepto el{" "}
-                  <Link
-                    className="border-b border-white/40 text-paper"
-                    href="/aviso-de-privacidad"
-                    target="_blank"
-                  >
-                    aviso de privacidad
-                  </Link>{" "}
-                  y el tratamiento de mis datos para atender esta solicitud.
-                </span>
-              </label>
-              {errors.privacyAccepted ? (
-                <p
-                  className="text-sm text-red-200"
-                  id="privacyAccepted-error"
-                  role="alert"
+              <p className="rounded-xl border border-white/10 p-4 text-sm leading-6 text-paper-muted">
+                Al enviar este formulario, sus datos serán tratados para atender
+                su solicitud conforme a nuestro{" "}
+                <Link
+                  className="border-b border-white/40 text-paper"
+                  href="/aviso-de-privacidad"
+                  target="_blank"
                 >
-                  {errors.privacyAccepted.message}
-                </p>
-              ) : null}
+                  Aviso de Privacidad
+                </Link>
+                .
+              </p>
               <div className="flex items-start gap-3 rounded-xl bg-white/[0.04] p-4 text-xs leading-5 text-paper-quiet">
                 <ShieldCheck
                   aria-hidden="true"

@@ -36,7 +36,7 @@ export const lawyers: readonly Lawyer[] = [
     email: "r.lizarraga@lizarragaibarra.com",
     phone: "6692122543",
     whatsapp: "526692122543",
-    image: "/images/team/rodrigo-lizarraga.png",
+    image: "/images/team/rodrigo.png",
     imageAlt: "Rodrigo Lizárraga Camacho, socio de Lizárraga & Ibarra Abogados",
   },
   {
@@ -60,6 +60,8 @@ export const lawyers: readonly Lawyer[] = [
     email: "f.ibarra@lizarragaibarra.com",
     phone: "6674899183",
     whatsapp: "526674899183",
+    image: "/images/team/felipe.png",
+    imageAlt: "Felipe Ibarra Ibarra, socio de Lizárraga & Ibarra Abogados",
   },
 ];
 export function getLawyerBySlug(slug: string) {

@@ -22,9 +22,6 @@ const schema = z.object({
     .trim()
     .min(20, "Escribe un mensaje de al menos 20 caracteres.")
     .max(2000),
-  privacyAccepted: z
-    .boolean()
-    .refine(Boolean, "Debes aceptar el aviso de privacidad."),
   website: z.string().max(0).optional(),
 });
 
@@ -47,7 +44,6 @@ export function ContactForm() {
       company: "",
       practiceArea: "",
       message: "",
-      privacyAccepted: false,
       website: "",
     },
   });
@@ -228,38 +224,18 @@ export function ContactForm() {
           {...register("website")}
         />
       </div>
-      <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-white/10 p-4 text-sm leading-6 text-paper-muted">
-        <input
-          aria-describedby={
-            errors.privacyAccepted ? "contact-privacy-error" : undefined
-          }
-          aria-invalid={errors.privacyAccepted ? true : undefined}
-          className="mt-1 size-4 accent-white"
-          id="contact-privacy"
-          type="checkbox"
-          {...register("privacyAccepted")}
-        />
-        <span>
-          Acepto el{" "}
-          <Link
-            className="border-b border-white/40 text-paper"
-            href="/aviso-de-privacidad"
-            target="_blank"
-          >
-            aviso de privacidad
-          </Link>{" "}
-          para la atención de mi mensaje.
-        </span>
-      </label>
-      {errors.privacyAccepted ? (
-        <p
-          className="text-sm text-red-200"
-          id="contact-privacy-error"
-          role="alert"
+      <p className="rounded-xl border border-white/10 p-4 text-sm leading-6 text-paper-muted">
+        Al enviar este formulario, sus datos serán tratados para atender su
+        solicitud conforme a nuestro{" "}
+        <Link
+          className="border-b border-white/40 text-paper"
+          href="/aviso-de-privacidad"
+          target="_blank"
         >
-          {errors.privacyAccepted.message}
-        </p>
-      ) : null}
+          Aviso de Privacidad
+        </Link>
+        .
+      </p>
       <div className="flex items-start gap-3 rounded-xl bg-white/[0.04] p-4 text-xs leading-5 text-paper-quiet">
         <ShieldAlert aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
         Por tu seguridad, evita compartir información confidencial o

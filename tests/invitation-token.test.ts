@@ -11,13 +11,14 @@ describe("invitación y activación", () => {
     expect(hashToken(created.token)).toBe(created.tokenHash);
   });
 
-  it("exige contraseña robusta y confirmación coincidente", () => {
+  it("exige contraseña coincidente y aceptación jurídica", () => {
     const token = createSecureToken().token;
     expect(
       activationSchema.safeParse({
         token,
         password: "Clave-Segura-2026!",
         passwordConfirmation: "Clave-Segura-2026!",
+        legalAccepted: true,
       }).success,
     ).toBe(true);
     expect(
@@ -25,6 +26,15 @@ describe("invitación y activación", () => {
         token,
         password: "Clave-Segura-2026!",
         passwordConfirmation: "Otra-Clave-2026!",
+        legalAccepted: true,
+      }).success,
+    ).toBe(false);
+    expect(
+      activationSchema.safeParse({
+        token,
+        password: "Clave-Segura-2026!",
+        passwordConfirmation: "Clave-Segura-2026!",
+        legalAccepted: false,
       }).success,
     ).toBe(false);
   });
