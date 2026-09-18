@@ -2183,6 +2183,7 @@ textarea {
   aspect-ratio: 1.12;
   right: 4vw;
   top: 15vh;
+  opacity: 0.14;
 }
 .hero-watermark img {
   object-fit: contain;
@@ -2248,6 +2249,51 @@ textarea {
   padding-top: 25px;
   border-top: 1px solid #ffffff2b;
   max-width: 1030px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero-watermark {
+    animation: li-hero-watermark 1000ms var(--li-ease) 100ms both;
+  }
+  .hero-line > span {
+    animation: li-hero-line 700ms var(--li-ease) 80ms both;
+  }
+  .hero-line:nth-child(2) > span {
+    animation-delay: 140ms;
+  }
+  .hero-line:nth-child(3) > span {
+    animation-delay: 200ms;
+  }
+  .hero-support {
+    animation: li-hero-support 620ms var(--li-ease) 300ms both;
+  }
+}
+@keyframes li-hero-watermark {
+  from {
+    opacity: 0;
+    transform: translate3d(28px, 0, 0);
+  }
+  to {
+    opacity: 0.14;
+    transform: translate3d(0, 0, 0);
+  }
+}
+@keyframes li-hero-line {
+  from {
+    transform: translate3d(0, 112%, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+@keyframes li-hero-support {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
 }
 .hero-support > p {
   font-size: 14px;
