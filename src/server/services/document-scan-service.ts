@@ -40,7 +40,7 @@ export function isActiveDocumentScanClaim(
 
 function configuredScannerName() {
   const provider = process.env.FILE_SCANNER_PROVIDER?.trim().toLowerCase();
-  return provider === "clamav" || provider === "mock"
+  return provider === "clamav" || provider === "mock" || provider === "disabled"
     ? provider
     : "unavailable";
 }

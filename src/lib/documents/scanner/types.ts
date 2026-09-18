@@ -2,7 +2,7 @@ export type DocumentScannerResult =
   { verdict: "clean" } | { verdict: "infected"; threat?: string };
 
 export interface DocumentScanner {
-  readonly name: "mock" | "clamav";
+  readonly name: "mock" | "clamav" | "disabled";
   scan(bytes: Uint8Array): Promise<DocumentScannerResult>;
 }
 

@@ -3,12 +3,14 @@ import {
   getDocumentScanTimeoutMs,
 } from "@/lib/documents/config";
 import { ClamAvDocumentScanner } from "@/lib/documents/scanner/clamav";
+import { DisabledDocumentScanner } from "@/lib/documents/scanner/disabled";
 import { MockDocumentScanner } from "@/lib/documents/scanner/mock";
 import { isLocalDevelopment, isVercelPreview } from "@/lib/environment";
 import type { RuntimeEnvironment } from "@/lib/environment";
 
 export * from "./types";
 export * from "./clamav";
+export * from "./disabled";
 
 export function isMockDocumentScannerAllowed(
   environment: RuntimeEnvironment = process.env,
@@ -29,6 +31,7 @@ export function getDocumentScanner(
     }
     return new MockDocumentScanner();
   }
+  if (provider === "disabled") return new DisabledDocumentScanner();
   if (provider !== "clamav") {
     throw new Error(`Proveedor de análisis no soportado: ${provider}`);
   }

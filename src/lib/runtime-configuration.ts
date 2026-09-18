@@ -18,7 +18,7 @@ const baseSchema = z.object({
   EMAIL_PROVIDER: z.enum(["mock", "brevo", "resend"]).default("mock"),
   CALENDAR_PROVIDER: z.enum(["mock", "google", "internal"]).default("internal"),
   STORAGE_PROVIDER: z.enum(["local", "s3"]).default("local"),
-  FILE_SCANNER_PROVIDER: z.enum(["mock", "clamav"]).default("mock"),
+  FILE_SCANNER_PROVIDER: z.enum(["mock", "clamav", "disabled"]).default("mock"),
   RATE_LIMIT_PROVIDER: z.enum(["memory", "database"]).default("memory"),
 });
 
@@ -135,7 +135,7 @@ export function validateRuntimeConfiguration(
       invalid.push("CLAMAV_PORT");
     }
     if (scannerProduction) require("FILE_SCAN_CRON_SECRET");
-  } else if (scannerProduction) {
+  } else if (scanner !== "disabled" && scannerProduction) {
     invalid.push("FILE_SCANNER_PROVIDER");
   }
   const rateLimit = environment.RATE_LIMIT_PROVIDER?.trim() || "memory";

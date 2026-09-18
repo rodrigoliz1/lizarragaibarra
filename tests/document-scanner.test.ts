@@ -74,6 +74,18 @@ describe("scanner de documentos", () => {
     ).toThrow("no está permitido en producción");
   });
 
+  it("mantiene disabled como scanner no disponible en producción", async () => {
+    const scanner = getDocumentScanner({
+      NODE_ENV: "production",
+      FILE_SCANNER_PROVIDER: "disabled",
+    });
+
+    expect(scanner.name).toBe("disabled");
+    await expect(scanner.scan(new Uint8Array([1]))).rejects.toThrow(
+      "temporalmente deshabilitado",
+    );
+  });
+
   it("exige host y puerto válidos para ClamAV", () => {
     expect(() =>
       getDocumentScanner({

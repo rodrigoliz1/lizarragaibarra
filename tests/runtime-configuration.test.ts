@@ -79,6 +79,24 @@ describe("configuración centralizada", () => {
     expect(report.invalid).toContain("FILE_SCANNER_PROVIDER");
   });
 
+  it("permite deshabilitar el análisis sin aprobar documentos en producción", () => {
+    const report = validateRuntimeConfiguration({
+      NODE_ENV: "production",
+      VERCEL_ENV: "production",
+      FILE_SCANNER_PROVIDER: "disabled",
+      RATE_LIMIT_PROVIDER: "database",
+    });
+
+    expect(report.invalid).not.toContain("FILE_SCANNER_PROVIDER");
+    expect(report.missing).not.toEqual(
+      expect.arrayContaining([
+        "CLAMAV_HOST",
+        "CLAMAV_PORT",
+        "FILE_SCAN_CRON_SECRET",
+      ]),
+    );
+  });
+
   it("exige un secreto de cron robusto para reintentos de análisis", () => {
     const report = validateRuntimeConfiguration({
       NODE_ENV: "production",

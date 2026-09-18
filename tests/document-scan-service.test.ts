@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { DocumentScanner } from "@/lib/documents/scanner";
 import { DocumentScannerUnavailableError } from "@/lib/documents/scanner";
@@ -92,6 +92,10 @@ describe("orquestación de cuarentena documental", () => {
     );
   });
 
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
   it("promueve fuera de cuarentena sólo tras un veredicto limpio", async () => {
     const privateStorage = storage();
     const result = await scanPendingDocument("doc-1", {
@@ -152,6 +156,29 @@ describe("orquestación de cuarentena documental", () => {
       expect.objectContaining({
         data: expect.objectContaining({
           scanStatus: "PENDING",
+          scanError: "SCANNER_UNAVAILABLE",
+          scannedAt: null,
+        }),
+      }),
+    );
+  });
+
+  it("mantiene el archivo en cuarentena cuando el scanner está disabled", async () => {
+    vi.stubEnv("FILE_SCANNER_PROVIDER", "disabled");
+    const privateStorage = storage();
+
+    const result = await scanPendingDocument("doc-1", {
+      storage: privateStorage,
+    });
+
+    expect(result.status).toBe("PENDING");
+    expect(privateStorage.put).not.toHaveBeenCalled();
+    expect(privateStorage.delete).not.toHaveBeenCalled();
+    expect(database.finalize).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          scanStatus: "PENDING",
+          scanProvider: "disabled",
           scanError: "SCANNER_UNAVAILABLE",
           scannedAt: null,
         }),

@@ -90,6 +90,14 @@ Configure como variables no secretas `NEXT_PUBLIC_SITE_URL`, `AUTH_URL`, `EMAIL_
 
 Nunca pegue valores secretos en `wrangler.jsonc`, GitHub Actions, commits o mensajes de chat. Cloudflare permite cargarlos con `wrangler secret put NOMBRE_DEL_SECRETO`.
 
+### Análisis de documentos
+
+Mientras ClamAV no esté disponible, configure `FILE_SCANNER_PROVIDER=disabled`. Las cargas privadas pasan las validaciones de formato y se almacenan únicamente en cuarentena con estado `PENDING`; no se promueven a almacenamiento disponible, no se marcan `CLEAN` y no se pueden descargar. Esta opción no requiere `CLAMAV_HOST`, `CLAMAV_PORT` ni `FILE_SCAN_CRON_SECRET`.
+
+Cuando exista ClamAV, sustituya esa variable por `FILE_SCANNER_PROVIDER=clamav` y configure `CLAMAV_HOST`, `CLAMAV_PORT` y el secreto `FILE_SCAN_CRON_SECRET` (mínimo 24 caracteres). El cron de escaneo podrá entonces procesar los documentos que permanecieron pendientes.
+
+En producción configure `RATE_LIMIT_PROVIDER=database`; usa la base Neon ya configurada y requiere `RATE_LIMIT_SALT`.
+
 ## 5. Desplegar
 
 1. Conecte el repositorio GitHub a Cloudflare Workers Builds.
