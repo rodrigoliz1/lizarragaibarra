@@ -79,6 +79,7 @@ export function PracticeSelector() {
             alt={image.alt}
             className="object-cover"
             fill
+            loading="eager"
             sizes="(max-width: 900px) 100vw, 48vw"
             src={image.src}
           />

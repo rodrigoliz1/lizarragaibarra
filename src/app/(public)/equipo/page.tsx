@@ -16,8 +16,8 @@ export default async function Team() {
       />
       <section className="li-container page-content">
         <div className="team-grid">
-          {team.map((l) => (
-            <TeamMember lawyer={l} key={l.slug} />
+          {team.map((l, index) => (
+            <TeamMember lawyer={l} key={l.slug} priority={index === 0} />
           ))}
         </div>
       </section>

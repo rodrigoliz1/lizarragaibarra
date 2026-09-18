@@ -618,7 +618,7 @@ textarea {
 }
 .methodology li > span {
   font-size: 10px;
-  color: #8d7955;
+  color: #756442;
 }
 .methodology h3 {
   margin: 35px 0 18px;
@@ -826,7 +826,7 @@ textarea {
   margin-bottom: 70px;
 }
 .page-intro > .li-label {
-  color: #8a7551;
+  color: #7a6847;
   margin-bottom: 25px;
 }
 .page-intro-grid {
@@ -875,7 +875,9 @@ textarea {
 .prose-li a {
   text-decoration: underline;
 }
-.legal-document { background: var(--li-ivory); }
+.legal-document {
+  background: var(--li-ivory);
+}
 .legal-document-header {
   padding-block: clamp(72px, 10vw, 140px) clamp(56px, 7vw, 96px);
   border-bottom: 1px solid var(--li-line);
@@ -920,22 +922,33 @@ textarea {
   overflow: auto;
   padding-right: 24px;
   scrollbar-width: thin;
+  min-width: 0;
 }
 .legal-document-index strong {
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
-.legal-document-index nav { display: grid; gap: 9px; }
+.legal-document-index nav {
+  display: grid;
+  gap: 9px;
+}
 .legal-document-index a {
   color: var(--li-muted);
   font-size: 11px;
   line-height: 1.45;
   text-decoration: none;
+  overflow-wrap: anywhere;
 }
 .legal-document-index a:hover,
-.legal-document-index a:focus-visible { color: var(--li-ink); }
-.legal-document-copy { max-width: 76ch; }
+.legal-document-index a:focus-visible {
+  color: var(--li-ink);
+}
+.legal-document-copy {
+  max-width: 76ch;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
 .legal-document-copy h2 {
   scroll-margin-top: 126px;
   margin-top: 72px;
@@ -946,16 +959,23 @@ textarea {
   letter-spacing: -0.025em;
   text-wrap: balance;
 }
-.legal-document-copy h2:first-child { margin-top: 0; }
+.legal-document-copy h2:first-child {
+  margin-top: 0;
+}
 .legal-document-copy h3 {
   margin-top: 34px;
   font-size: 17px;
   letter-spacing: 0.02em;
 }
 .legal-document-copy p,
-.legal-document-copy li { font-size: 15px; line-height: 1.85; }
+.legal-document-copy li {
+  font-size: 15px;
+  line-height: 1.85;
+}
 @media (max-width: 840px) {
-  .legal-document-layout { grid-template-columns: 1fr; }
+  .legal-document-layout {
+    grid-template-columns: 1fr;
+  }
   .legal-document-index {
     position: static;
     max-height: none;
@@ -967,24 +987,50 @@ textarea {
   }
 }
 @media (max-width: 560px) {
-  .legal-document-header > div { flex-direction: column; gap: 8px; }
-  .legal-document-index nav { grid-template-columns: 1fr; }
+  .legal-document-header > div {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .legal-document-index nav {
+    grid-template-columns: 1fr;
+  }
   .legal-document-copy p,
-  .legal-document-copy li { font-size: 14px; }
+  .legal-document-copy li {
+    font-size: 14px;
+  }
 }
 @media print {
-  .li-header, .li-footer, .legal-document-index { display: none !important; }
-  .li-public main { padding-top: 0 !important; }
-  .legal-document-header, .legal-document-layout {
+  .li-header,
+  .li-footer,
+  .legal-document-index {
+    display: none !important;
+  }
+  .li-public main {
+    padding-top: 0 !important;
+  }
+  .legal-document-header,
+  .legal-document-layout {
     width: 100%;
     padding: 24pt 0;
   }
-  .legal-document-header h1 { font-size: 34pt; }
-  .legal-document-layout { display: block; }
-  .legal-document-copy { max-width: none; }
-  .legal-document-copy h2 { break-after: avoid; margin-top: 28pt; }
+  .legal-document-header h1 {
+    font-size: 34pt;
+  }
+  .legal-document-layout {
+    display: block;
+  }
+  .legal-document-copy {
+    max-width: none;
+  }
+  .legal-document-copy h2 {
+    break-after: avoid;
+    margin-top: 28pt;
+  }
   .legal-document-copy p,
-  .legal-document-copy li { orphans: 3; widows: 3; }
+  .legal-document-copy li {
+    orphans: 3;
+    widows: 3;
+  }
 }
 .editorial-list {
   padding-block: 80px;
@@ -2498,7 +2544,7 @@ textarea {
 }
 .practice-index button > span {
   font-size: 9px;
-  color: #8e7853;
+  color: #a38c65;
 }
 .practice-index button > strong {
   font: 400 clamp(28px, 2.6vw, 40px)/1 var(--font-serif);
@@ -3287,23 +3333,23 @@ textarea {
 }
 
 @media (max-width: 700px) {
-  .home-portal + .contact-cta {
+  .contact-cta {
     overflow: hidden;
   }
-  .home-portal + .contact-cta > div {
+  .contact-cta > div {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 58px;
     gap: 12px;
   }
-  .home-portal + .contact-cta h2 {
+  .contact-cta h2 {
     font-size: 43px;
     min-width: 0;
   }
-  .home-portal + .contact-cta .li-circle-link {
+  .contact-cta .li-circle-link {
     width: 58px;
     height: 58px;
   }
-  .home-portal + .contact-cta .li-circle-link svg {
+  .contact-cta .li-circle-link svg {
     width: 27px;
   }
 }

@@ -20,7 +20,8 @@ import {
   UsersRound,
   X,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useMobileNavigationDialog } from "@/components/layout/use-mobile-navigation-dialog";
 
 const navigation = [
   { href: "/admin", label: "Visión general", icon: LayoutDashboard },
@@ -69,15 +70,10 @@ export function AdminShell({
 }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  useEffect(() => {
-    if (!mobileOpen) return;
-    function closeOnEscape(event: KeyboardEvent) {
-      if (event.key === "Escape") setMobileOpen(false);
-    }
-    window.addEventListener("keydown", closeOnEscape);
-    return () => window.removeEventListener("keydown", closeOnEscape);
-  }, [mobileOpen]);
+  const { dialogRef, triggerRef } = useMobileNavigationDialog(
+    mobileOpen,
+    setMobileOpen,
+  );
 
   return (
     <div className="min-h-screen bg-[#f3f1ed] text-[#151515]">
@@ -99,6 +95,7 @@ export function AdminShell({
           </span>
         </Link>
         <button
+          ref={triggerRef}
           type="button"
           onClick={() => setMobileOpen(true)}
           className="grid size-10 place-items-center rounded-full border border-black/15"
@@ -119,6 +116,7 @@ export function AdminShell({
             aria-label="Cerrar menú"
           />
           <aside
+            ref={dialogRef}
             aria-label="Navegación administrativa"
             aria-modal="true"
             className="absolute inset-y-0 left-0 flex w-[min(88vw,330px)] flex-col bg-[#0b0b0b] text-white shadow-2xl"

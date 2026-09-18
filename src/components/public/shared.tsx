@@ -61,10 +61,10 @@ export function TeamPortrait({
         <Image
           src={lawyer.image}
           alt={lawyer.imageAlt || lawyer.name}
+          fetchPriority={priority ? "high" : "auto"}
           fill
+          loading={priority ? "eager" : "lazy"}
           sizes="(max-width: 700px) 90vw, 40vw"
-          priority={priority}
-          unoptimized
         />
       ) : (
         <div className="portrait-monogram" aria-label={lawyer.name}>
@@ -75,11 +75,17 @@ export function TeamPortrait({
     </div>
   );
 }
-export function TeamMember({ lawyer }: { lawyer: Lawyer }) {
+export function TeamMember({
+  lawyer,
+  priority = false,
+}: {
+  lawyer: Lawyer;
+  priority?: boolean;
+}) {
   return (
     <article className="team-member">
       <Link href={"/equipo/" + lawyer.slug}>
-        <TeamPortrait lawyer={lawyer} />
+        <TeamPortrait lawyer={lawyer} priority={priority} />
         <div className="team-title">
           <div>
             <p className="li-label">{lawyer.role}</p>

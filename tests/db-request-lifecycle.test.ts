@@ -3,6 +3,8 @@ import { describe, expect, it, vi } from "vitest";
 import {
   createLazyForwardingProxy,
   createRequestScopedValue,
+  disconnectRequestDatabaseClient,
+  getRequestDatabaseClient,
 } from "@/lib/db/request-lifecycle";
 
 describe("Cloudflare request-scoped database lifecycle", () => {
@@ -41,5 +43,22 @@ describe("Cloudflare request-scoped database lifecycle", () => {
 
     activeRequest = secondRequest;
     expect(db.readRequestId()).not.toBe(firstId);
+  });
+
+  it("disconnects and releases the client when a Worker request finishes", async () => {
+    const disconnect = vi.fn(async () => undefined);
+    const createClient = vi.fn(() => ({ $disconnect: disconnect }));
+    const request = {};
+
+    const firstClient = getRequestDatabaseClient(request, createClient);
+    expect(getRequestDatabaseClient(request, createClient)).toBe(firstClient);
+
+    await disconnectRequestDatabaseClient(request);
+    expect(disconnect).toHaveBeenCalledOnce();
+
+    expect(getRequestDatabaseClient(request, createClient)).not.toBe(
+      firstClient,
+    );
+    expect(createClient).toHaveBeenCalledTimes(2);
   });
 });

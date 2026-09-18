@@ -6,7 +6,7 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 import {
   createLazyForwardingProxy,
-  createRequestScopedValue,
+  getRequestDatabaseClient,
 } from "@/lib/db/request-lifecycle";
 
 const globalForPrisma = globalThis as unknown as {
@@ -48,10 +48,6 @@ function isCloudflareWorkersRuntime() {
   );
 }
 
-const getRequestPrismaClient = createRequestScopedValue(() =>
-  createPrismaClient(true),
-);
-
 let nodePrisma: PrismaClient | undefined;
 
 function getNodePrismaClient() {
@@ -67,7 +63,7 @@ function getNodePrismaClient() {
 function getPrismaClient() {
   if (isCloudflareWorkersRuntime()) {
     const { ctx } = getCloudflareContext();
-    return getRequestPrismaClient(ctx);
+    return getRequestDatabaseClient(ctx, () => createPrismaClient(true));
   }
 
   return getNodePrismaClient();

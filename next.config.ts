@@ -46,7 +46,10 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       { source: "/firma", destination: "/nosotros", permanent: true },
+      { source: "/practicas", destination: "/servicios", permanent: true },
       { source: "/areas", destination: "/servicios", permanent: true },
+      { source: "/perspectivas", destination: "/insights", permanent: true },
+      { source: "/agenda", destination: "/agendar", permanent: true },
       {
         source: "/admin/insights",
         destination: "/admin/articulos",

@@ -20,7 +20,8 @@ import {
   X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useMobileNavigationDialog } from "@/components/layout/use-mobile-navigation-dialog";
 
 type PortalUserRole = "CLIENT" | "LAWYER" | "ADMIN";
 
@@ -111,23 +112,16 @@ export function PortalShell({
 }: PortalShellProps) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { dialogRef, triggerRef } = useMobileNavigationDialog(
+    mobileOpen,
+    setMobileOpen,
+  );
   const initials = userName
     .split(" ")
     .map((part) => part[0])
     .join("")
     .slice(0, 2)
     .toUpperCase();
-
-  useEffect(() => {
-    if (!mobileOpen) return;
-
-    function closeOnEscape(event: KeyboardEvent) {
-      if (event.key === "Escape") setMobileOpen(false);
-    }
-
-    document.addEventListener("keydown", closeOnEscape);
-    return () => document.removeEventListener("keydown", closeOnEscape);
-  }, [mobileOpen]);
 
   return (
     <div className="min-h-screen bg-[#080808] text-white">
@@ -155,6 +149,7 @@ export function PortalShell({
           </span>
         </Link>
         <button
+          ref={triggerRef}
           type="button"
           onClick={() => setMobileOpen(true)}
           className="grid size-10 place-items-center rounded-full border border-white/15 text-white"
@@ -175,6 +170,7 @@ export function PortalShell({
             onClick={() => setMobileOpen(false)}
           />
           <aside
+            ref={dialogRef}
             aria-label="Menú del portal"
             aria-modal="true"
             className="absolute inset-y-0 left-0 flex w-[min(88vw,320px)] flex-col border-r border-white/10 bg-[#0b0b0b] shadow-2xl"
