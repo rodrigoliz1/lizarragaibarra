@@ -2523,6 +2523,31 @@ textarea {
   position: absolute;
   inset: 0;
 }
+.practice-image.is-entering {
+  z-index: 1;
+  animation: li-practice-image-in 450ms var(--li-ease) both;
+}
+.practice-image.is-leaving {
+  animation: li-practice-image-out 450ms var(--li-ease) both;
+}
+@keyframes li-practice-image-in {
+  from {
+    opacity: 0;
+    transform: scale(1.015);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes li-practice-image-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
 .practice-image img {
   filter: grayscale(1);
   object-position: center;

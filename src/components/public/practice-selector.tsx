@@ -1,21 +1,42 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { editorialImages } from "@/data/editorial-images";
 import { practiceAreas } from "@/data/practice-areas";
 
 export function PracticeSelector() {
   const [active, setActive] = useState(practiceAreas[0].slug);
-  const reduceMotion = useReducedMotion();
+  const [previous, setPrevious] = useState<string | null>(null);
+  const transitionTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const selected =
     practiceAreas.find((area) => area.slug === active) ?? practiceAreas[0];
   const image =
     editorialImages[selected.slug as keyof typeof editorialImages] ??
     editorialImages.firm;
+  const previousArea = practiceAreas.find((area) => area.slug === previous);
+  const previousImage = previousArea
+    ? (editorialImages[previousArea.slug as keyof typeof editorialImages] ??
+      editorialImages.firm)
+    : null;
+
+  useEffect(
+    () => () => {
+      if (transitionTimer.current) clearTimeout(transitionTimer.current);
+    },
+    [],
+  );
+
+  function selectArea(slug: string) {
+    if (slug === active) return;
+
+    setPrevious(active);
+    setActive(slug);
+    if (transitionTimer.current) clearTimeout(transitionTimer.current);
+    transitionTimer.current = setTimeout(() => setPrevious(null), 450);
+  }
 
   return (
     <div className="practice-experience">
@@ -25,9 +46,9 @@ export function PracticeSelector() {
             aria-pressed={active === area.slug}
             className={active === area.slug ? "selected" : ""}
             key={area.slug}
-            onClick={() => setActive(area.slug)}
-            onFocus={() => setActive(area.slug)}
-            onMouseEnter={() => setActive(area.slug)}
+            onClick={() => selectArea(area.slug)}
+            onFocus={() => selectArea(area.slug)}
+            onMouseEnter={() => selectArea(area.slug)}
             type="button"
           >
             <span>{area.index}</span>
@@ -37,25 +58,32 @@ export function PracticeSelector() {
         ))}
       </div>
       <div className="practice-visual">
-        <AnimatePresence mode="wait">
-          <motion.div
-            animate={{ opacity: 1, scale: 1 }}
-            className="practice-image"
-            exit={reduceMotion ? undefined : { opacity: 0 }}
-            initial={reduceMotion ? false : { opacity: 0, scale: 1.015 }}
-            key={selected.slug}
-            transition={{ duration: 0.45 }}
-          >
+        {previousImage ? (
+          <div className="practice-image is-leaving">
             <Image
-              alt={image.alt}
+              alt=""
               className="object-cover"
               fill
               sizes="(max-width: 900px) 100vw, 48vw"
-              src={image.src}
+              src={previousImage.src}
             />
             <div aria-hidden="true" className="practice-image-shade" />
-          </motion.div>
-        </AnimatePresence>
+          </div>
+        ) : null}
+        <div
+          className={
+            previousImage ? "practice-image is-entering" : "practice-image"
+          }
+        >
+          <Image
+            alt={image.alt}
+            className="object-cover"
+            fill
+            sizes="(max-width: 900px) 100vw, 48vw"
+            src={image.src}
+          />
+          <div aria-hidden="true" className="practice-image-shade" />
+        </div>
         <div className="practice-copy">
           <p>{selected.summary}</p>
           <ul>
